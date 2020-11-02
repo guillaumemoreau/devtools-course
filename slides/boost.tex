@@ -1,0 +1,332 @@
+\subsection{Boost Test}
+\label{sec:boost:test}
+
+
+\begin{frame}{Boost ?}
+\begin{itemize}
+\item Boost est un ensemble de bibliothèques C++
+\begin{itemize}
+\item objectif "productivité"
+\end{itemize}
+\item Des compléments de la bibliothèque standard
+\begin{itemize}
+\item quelques interactions avec la norme
+\item i.e. Boost préfigure la norme
+\end{itemize}
+\item Plus facile à intégrer que Google Test : peut s'utiliser uniquement avec des \texttt{.h} seuls
+\item Meilleur support du multi-plateforme
+\item facile à utiliser via cmake comme Visual Studio
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Boost.Test}
+\begin{itemize}
+\item La partie de Boost dédiée aux tests
+\item Utilisable uniquement en \texttt{.h} même si ce n'est pas recommandé
+\item basée sur un ensemble de macros (répétitives)
+\item Courbe d'apprentissage simple
+\item Test cases et Tests suites
+\item tests paramétriques, fixtures, exceptions, death tests, gestion des flottants
+\item différentes formes de sorties (texte, xml...), intégration avec d'autres outils
+\item Multi-plateformes
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Au plus simple !}
+\begin{lstlisting}
+#define BOOST_TEST_MODULE My Test
+#include <boost/test/included/unit_test.hpp>
+
+BOOST_AUTO_TEST_CASE(first_test)
+{
+  int i = 1;
+  BOOST_TEST(i);
+  BOOST_TEST(i == 2);
+}
+\end{lstlisting}
+\begin{itemize}
+\item \texttt{BOOST\_TEST\_MODULE} le nom du module de test
+\item Utiliser le répertoire \texttt{included} pour une version utilisation uniquement les \texttt{.h}
+\item \texttt{BOOST\_AUTO\_CASE\_TEST} définition d'un cas de test
+\item \texttt{BOOST\_TEST} : test un prédicat
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Compilation et exécution}
+\begin{itemize}
+\item Compilation : il  suffit d'ajouter le répertoire de boost aux répertoires d'include
+\item Version de boost utilisée : 1.71.0
+\begin{verbatim}
+g++ -o boost1 -I/Users/moreau/dev/local/boost boost1.cpp
+\end{verbatim}
+\item Exécution en ligne de commande
+\begin{lstlisting}[language=Bash]
+./boost1
+
+Running 1 test case...
+boost1.cpp:8: error: in "first_test": check i == 2 has failed [1 != 2]
+
+*** 1 failure is detected in the test module "My Test"
+
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Test d'une fonction factorielle}
+\begin{itemize}
+\item \texttt{factorielle.cpp}
+\begin{lstlisting}
+int factorielle(int x) {
+  if (x==1) {
+    return 1;
+  }
+  else {
+    return x*factorielle(x-1);
+  }
+}
+\end{lstlisting}
+\item \texttt{factorielle.h}
+\begin{lstlisting}
+int factorielle(int x);
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Code de test}
+\begin{itemize}
+\item \texttt{boost2.cpp}
+\begin{lstlisting}
+#define BOOST_TEST_MODULE Mes fonctions
+#include <boost/test/included/unit_test.hpp>
+
+#include "factorielle.h"
+
+BOOST_AUTO_TEST_CASE(GereLesValeursPositives)
+{
+  BOOST_CHECK(factorielle(5) == 120);
+  BOOST_CHECK(factorielle(1) == 1);
+  BOOST_CHECK_EQUAL(factorielle(1),1);
+
+  // BOOST_CHECK(factorielle(4) == 13);
+  BOOST_CHECK_EQUAL(factorielle(4),24);
+}
+
+BOOST_AUTO_TEST_CASE(GereLeZero)
+{
+  BOOST_CHECK(factorielle(0) == 1);
+
+}
+\end{lstlisting}
+\item \texttt{BOOST\_CHECK\_EQUAL()} est plus intéressant que \texttt{BOOST\_CHECK} (en cas d'erreur)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Compilation et résultats}
+\begin{itemize}
+\item Compilation
+\begin{lstlisting}[language=Bash]
+g++ -o boost2 -I/Users/moreau/dev/local/boost/ boost2.cpp factorielle.cpp
+\end{lstlisting}
+\item Résultat
+\begin{lstlisting}[language=Bash]
+./boost2
+
+Running 3 test cases...
+unknown location:0: fatal error: in "GereLeZero": memory access violation at address: 0x7ffeea63cff8: invalid permissions
+boost2.cpp:23: last checkpoint
+
+*** 1 failure is detected in the test module "Mes fonctions"
+\end{lstlisting}
+\pause \item Beaucoup plus intéressant !
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Les macros Boost}
+\begin{itemize}
+\item De la forme \texttt{BOOST\_level[\_test](...)}
+\item où \texttt{level} vaut
+\begin{itemize}
+\item \texttt{WARN} affichera alors un avertissement
+\item \texttt{CHECK} affichera une erreur
+\item \texttt{REQUIRE} affichera une erreur fatale et arrêtera l'exécution du test
+\end{itemize}
+\item et \texttt{test} peut être :
+\begin{itemize}
+\item rien : vérifiera ce qui est entre les parenthèses
+\item \texttt{EQUAL}, \texttt{GE}, \texttt{GT}, \texttt{LE}, \texttt{LT}, \texttt{NE}
+\item \texttt{CLOSE(left,right,tolerance)} pour les égalités entre flottants
+\item \texttt{SMALL(value,tolerance)} pour les valeurs $\epsilon$
+\item \texttt{EQUAL\_COLLECTIONS(l\_begin,l\_end,r\_begin,r\_end)} pour tester l'égalité de collections
+\item on peut aussi vérifier la levée d'exceptions, les prédicats (foncteurs) et pas mal d'autres choses
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Contexte de test : les fixtures}
+\begin{itemize}
+\item Pour mener des tests on a souvent besoin de données initiale
+\item Dans Boost, il faut créer des \texttt{struct} !
+\item Ici on suppose disposer d'une classe Pile classique
+\item Création de la structure d'initialisation des données
+\begin{lstlisting}
+struct MesDonnees {
+  pile p;
+  pile vide;
+
+  MesDonnees() {
+      p.push(2);
+      p.push(3);
+      p.push(4);
+  }
+
+  ~MesDonnees() {
+  }
+};
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Contexte de test : les fixtures}
+\begin{itemize}
+\item Utilisation de la fixture
+\begin{lstlisting}
+BOOST_FIXTURE_TEST_SUITE(Piles,MesDonnees)
+
+BOOST_AUTO_TEST_CASE(PileVide) {
+  BOOST_CHECK_EQUAL(vide.size(),0);
+}
+
+BOOST_AUTO_TEST_CASE(PileStandard) {
+  BOOST_CHECK_EQUAL(4,p.top());
+  BOOST_CHECK_EQUAL(3,p.size());
+}
+BOOST_AUTO_TEST_SUITE_END()
+\end{lstlisting}
+\item Résultats
+\begin{lstlisting}[language=Bash]
+./boost3
+
+Running 2 test cases...
+
+*** No errors detected
+\end{lstlisting}
+\item ici on a créé une \textit{Test Suite}, un ensemble de cas de tests
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Intégration (simple) avec cmake}
+\begin{itemize}
+\item On reprend l'exemple de la pile + fixtures
+\item Création d'une arborescence
+	\begin{itemize}
+	\item \texttt{src} pour les fichiers source
+	\item \texttt{test} pour les fichiers de test
+	\end{itemize}
+\item \texttt{CMakeLists.txt} minimal pour construire un exécutable
+\begin{lstlisting}[language=Bash]
+cmake_minimum_required(VERSION 2.8.4)
+
+project(boost_test_cmake)
+
+set(SOURCE_FILES src/main.cpp)
+
+add_executable(main_exe ${SOURCE_FILES})
+\end{lstlisting}
+\item Compilation et exécution
+\begin{lstlisting}[language=Bash]
+mkdir build
+cd build
+cmake ..
+make
+./main_exe
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Ajout des tests}
+\begin{itemize}
+\item les tests dans le répertoires test
+\begin{lstlisting}[language=Bash]
+set(TEST_FILES test/fixtures.cpp)
+\end{lstlisting}
+\item Ajout de boost à la main (version non compilée)
+\begin{lstlisting}[language=Bash]
+set(BOOST_DIR /Users/moreau/dev/local/boost)
+\end{lstlisting}
+\item Répertoires pour les include
+\begin{lstlisting}[language=Bash]
+include_directories(src ${BOOST_DIR})
+\end{lstlisting}
+\item Outils pour le test
+\begin{lstlisting}[language=Bash]
+enable_testing()
+add_executable(test_exe ${TEST_FILES})
+add_test(Test test_exe)
+\end{lstlisting}
+\item relancer \texttt{cmake}, \texttt{make} puis lancer les tests avec \texttt{ctest}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Résultats}
+\begin{lstlisting}[language=Bash]
+ctest
+
+Test project /Users/moreau/Documents/Enseignement/optionRV/MEDEV/tests/code/boost/build
+    Start 1: Test
+1/1 Test #1: Test .............................   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.01 sec
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Pour aller plus loin : plusieurs fichiers pour les tests}
+\begin{itemize}
+\item Pas envie de mettre tous ses tests dans le même fichier
+\item Exemple simple : on réintègre \texttt{boost2.cpp} dans test
+\item Quelques modifications dans le \texttt{CMakeLists.txt}
+\begin{lstlisting}[language=Bash]
+set(TEST_FILES test/fixtures.cpp test/boost2.cpp)
+
+add_executable(tf_exe boost2.cpp fonctions.cpp)
+add_test(TextFact tf_exe)
+\end{lstlisting}
+\item On peut ne faire qu'un seul exécutable de test bien sûr, mais alors un seul \texttt{BOOST\_TEST\_MODULE} (il contient un main)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Résultats}
+\begin{lstlisting}[language=Bash]
+ctest
+
+Test project /Users/moreau/Documents/Enseignement/optionRV/MEDEV/tests/code/boost/build
+    Start 1: TestFixtures
+1/2 Test #1: TestFixtures .....................   Passed    0.01 sec
+    Start 2: TextFact
+2/2 Test #2: TextFact .........................***Failed    0.05 sec
+
+50% tests passed, 1 tests failed out of 2
+
+Total Test time (real) =   0.06 sec
+
+The following tests FAILED:
+	  2 - TextFact (Failed)
+Errors while running CTest
+\end{lstlisting}
+
+\end{frame}

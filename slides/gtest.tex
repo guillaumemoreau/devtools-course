@@ -1,0 +1,966 @@
+\section{Les Tests}\label{les-tests}
+
+\begin{frame}{Contexte}
+\begin{itemize}
+
+\item Tester un programme
+\begin{itemize}
+\item Pourquoi faire ?
+\begin{itemize}
+\item Euh...
+\item Tests de non-régression : "je ne comprends pas, ça marchait hier"
+\item Gagner du temps
+\end{itemize}
+\item Sérieusement, vous voleriez dans un A320 sorti d'usine et mis en service sans avoir volé ??
+\end{itemize}
+\item Comment ?
+\begin{itemize}
+\item Automatiser les tests ?
+\item Automatiser et systématiser leur exécution
+\begin{itemize}
+\item A la livraison mais aussi à chaque modification même mineure
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Motivation}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Les logiciels évoluent
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Modification des fonctionnalités (exigences)
+  \item
+    Supprimer les bugs
+  \item
+    Optimisations
+  \item
+    Restructuration du code (refactoring)
+  \end{itemize}
+\item
+  Peut-on faire ces changements en toute confiance ?
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Ne pas casser le comportement actuel
+  \item
+    Ne pas introduire de nouveaux bugs
+  \item
+    Hypothèse raisonnable : pas de connaissance complète de la base de
+    code
+  \end{itemize}
+\item
+  Ecrire des tests automatisés est une \textbf{condition nécessaire}
+  pour passer au niveau supérieur
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Pas assez de temps pour faire des tests !}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  On aurait peut-être plus de temps si on avait écrit les tests
+  avant\ldots{}
+\item
+  On ne peut pas vraiment se permettre de ne pas écrire de tests
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Effectuer de grosses modifications dans un code sans tests, c'est
+    comme débuter le trapèze sans filet (M. Feathers ``Working
+    Effectively with Legacy Code'')
+  \item
+    Les bugs détectés tardivement coûtent
+    un ordre de grandeur de plus à résoudre
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      Ca se ressent sur le projet (et donc sur la paie des développeurs)
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Sans les tests appropriés\ldots{}}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  A un moment donné, on ne pourra plus faire de modifications dans le
+  projet sans \emph{doute raisonnable}
+\item
+  On aura l'impression qu'il n'y a plus d'espoir qu'un jour tous les
+  bugs soient enfin réparés
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    chaque bug réparé en crée un ou deux autres
+  \item
+    on en vient à livrer avec des \emph{bugs pas trop critiques}
+  \item
+    Le moral de l'équipe baisse et le turnover augmente
+  \end{itemize}
+\item
+  Ca vous rappelle quelque chose ?
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Écrire des tests = du temps pour les nouvelles fonctions
+!}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Comment ceci peut-il être vrai ?
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Rendre le code testable amène souvent à une meilleure architecture
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      Oblige à prendre en compte les besoins du client
+    \item
+      \emph{testable} signifie souvent réutilisable et peu dépendant,
+      i.e.~faire plus en moins de temps
+    \end{itemize}
+  \item
+    S'ils sont pensés correctement, les tests ne devraient pas prendre
+    très longtemps à écrire
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      tester chaque module isolément
+    \item
+      petits ou grands tests ?
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Petits tests plutôt que grands tests ?}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Grands tests
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Ce sont les tests systèmes, les tests d'intégration, de
+    non-régression, les tests avec les utilisateurs
+  \item
+    Difficile de localiser les erreurs détectées
+  \item
+    Lents et arrivent à la fin du processus
+  \item
+    Qui peut prouver qu'ils sont effectivement tous effectués ?
+  \end{itemize}
+\item
+  Petits tests
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Les fameux \emph{tests unitaires}
+  \item
+    Objectif : tester de façon isolée un module, une classe, une
+    fonction
+  \item
+    Rapides et faisables très tôt dans le processus de développement
+  \item
+    A vérifier avant de fournir votre code aux autres développeurs !
+  \end{itemize}
+\item
+  Bilan : les grands tests sont importants mais ils ne dispensent pas
+  des petits tests
+\end{itemize}
+
+\end{frame}
+
+\section{Tests unitaires en C++}
+
+
+\begin{frame}{Tests unitaires en C++}
+\begin{itemize}
+\item Pas de norme réellement établie en C++
+\item Selon \href{http://en.wikipedia.org/wiki/List_of_unit_testing_frameworks}{Wikipedia} (au 24/10/2014), il existe 64 outils de tests unitaires !
+\item Critères de choix
+\begin{itemize}
+\item Compatible avec la norme xUnit
+\begin{itemize}
+  \item norme pour l'exécution et le reporting : cf. intégration continue
+\end{itemize}
+\item Vraiment utilisé
+\item Multi-plateformes
+\item Pas (trop) compliqué
+\end{itemize}
+\pause\item Choix : Google Testing Framework
+\begin{itemize}
+\item \href{https://code.google.com/p/googletest/}{Site web}
+\end{itemize}
+\pause\item Alternative 2019 : Boost
+\begin{itemize}
+\item \href{https://www.boost.org}{Site web}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\input{boost}
+
+\subsection{Google Testing Framework}\label{google-testing-framework}
+
+\begin{frame}{Google Tests ?}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  C'est :
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    une bibliothèque pour écrire des \emph{petits} tests en C++
+  \item
+    complètement Open Source (licence BSD)
+  \item
+    basé sur xUnit (une sorte de norme de test multi-langages)
+  \item
+    portable et multi-plateforme : Linux, Windows, Mac OS\ldots{}
+  \item
+    peut générer du XML façon jUnit (\textbf{LA} référence de tests en
+    java)
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      intégrable à d'autres outils d'automatisation du processus de
+      développement
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Pourquoi Google Test ?}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Portabilité
+\item
+  (Assez) facile à apprendre
+\item
+  Richesse
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    ajout d'infos de Debug aux tests avec \textless{}\textless{}
+  \item
+    Death tests
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      Comment vérifier qu'une application qui devrait planter plante
+      effectivement !
+    \end{itemize}
+  \item
+    Tests paramétriques (sur les templates)
+  \item
+    Possibilité de plugins
+  \item
+    Filtrage de tests
+  \end{itemize}
+\item
+  Support actif
+\item
+  Utilisé dans des vrais projets de taille conséquente comme Chromium
+  (version OpenSource de Google Chrome), OpenCV ou LLVM
+\end{itemize}
+
+\end{frame}
+
+\subsection{Un peu de technique}
+
+\begin{frame}{Les bases}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Un programme à tester contient des \emph{Tests Cases}, autrement dit
+  des cas de tests (situations à tester)
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Idéalement, ceux-ci sont liés aux cas d'utilisation
+  \end{itemize}
+\item
+  Chaque \emph{Test case} est composé d'un certain nombre de
+  tests
+\item
+  Chaque Test est implémenté sous la forme d'une macro C++ : \texttt{TEST()} ou
+  \texttt{TEST\_F()}
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    \texttt{TEST(TestCaseName , TestName) \{ // vérifications \}}
+  \item
+    Les vérifications utilisent d'autres macros
+  \end{itemize}
+\item
+  On lance le tout avec un \emph{main()} spécifique et on obtient le
+  résultat des tests
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exemple très simple}
+\begin{lstlisting}
+// TEST(TestCaseName, TestName)
+TEST(NumberParserTest, CanParseBinaryNumber) {
+// read: a NumberParser can parse a binary number.
+
+NumberParser p(2); // radix = 2
+
+// Verifies the result of the function to be tested.
+EXPECT_EQ(0, p.Parse("0"));
+EXPECT_EQ(5, p.Parse("101"));
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+\frametitle{En pratique}
+\begin{itemize}
+\item Télécharger la bibliothèque sur le \href{https://github.com/google/googletest}{site de Google Test}
+\item Compiler Google Test en tant que bibliothèque
+\item Ajouter Google Test à votre projet
+\begin{itemize}
+\item ajouter le chemin vers Google Test pour les \textit{include}
+\item linker votre projet avec Google Test
+\item ajouter des tests à votre programme !
+\end{itemize}
+\item Les macros à utiliser
+\begin{itemize}
+\item \texttt{TEST(test\_case\_name,test\_name) \{ // macros de test \} }
+\item \texttt{ASSERT\_*(expected,actual)} avec * $\in$ \{ EQ, NE, LT, LE, GE, GT\}
+\item \texttt{EXPECT\_*(expected,actual)} avec * $\in$ \{ EQ, NE, LT, LE, GE, GT\}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exemple : test de la fonction factorielle}
+\begin{lstlisting}
+int factorielle(int n); // definie ailleurs
+
+#include "factorielle.h"
+#include "gtest/gtest.h"
+
+TEST(factorielle_test, GereLeZero) {
+  EXPECT_EQ(1,factorielle(0));
+}
+
+TEST(factorielle_test, GereLesValeursPositives) {
+  EXPECT_EQ(1,factorielle(1));
+  EXPECT_EQ(2,factorielle(2));
+  EXPECT_EQ(6,factorielle(3));
+  EXPECT_EQ(40320,factorielle(8));
+}
+
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Résultats d'exécution}
+{\tiny
+\begin{verbatim}
+Running main() from gtest_main.cc
+[==========] Running 5 tests from 2 test cases.
+[----------] Global test environment set-up.
+[----------] 3 tests from cpp_sorter_test
+[ RUN      ] cpp_sorter_test.null_term_str_sort
+[       OK ] cpp_sorter_test.null_term_str_sort (0 ms)
+[ RUN      ] cpp_sorter_test.char_arr_sort
+[       OK ] cpp_sorter_test.char_arr_sort (0 ms)
+[ RUN      ] cpp_sorter_test.int_arr_sort
+[       OK ] cpp_sorter_test.int_arr_sort (0 ms)
+[----------] 3 tests from cpp_sorter_test (0 ms total)
+
+[----------] 2 tests from factorielle_test
+[ RUN      ] factorielle_test.GereLeZero
+[       OK ] factorielle_test.GereLeZero (0 ms)
+[ RUN      ] factorielle_test.GereLesValeursPositives
+[       OK ] factorielle_test.GereLesValeursPositives (0 ms)
+[----------] 2 tests from factorielle_test (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 2 test cases ran. (0 ms total)
+[  PASSED  ] 5 tests.
+\end{verbatim}
+}
+\end{frame}
+
+\begin{frame}{Contexte de test}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  pour mener des tests, on a souvent besoin de données initiales (objets
+  à initialiser par exemple)
+\item
+  Google Test fournit
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    une classe à dériver \texttt{::testing::Test}
+  \item
+    une méthode \texttt{SetUp()} qui se charge des initialisations
+  \item
+    une méthode \texttt{TearDown()} qui libère les objets
+  \end{itemize}
+\item
+  Google Test fournit un objet \emph{neuf et frais} pour chaque test
+  pour éviter les effets de bord
+  \item Ensuite, on utilise \texttt{TEST\_F()} au lieu de \texttt{TEST()}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exemple : test d'une classe Pile}
+\begin{lstlisting}
+class PileTest : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    p1.push(2);
+    p1.push(3);
+    p1.push(4);
+  }
+
+  virtual void TearDown() {
+    //
+  }
+
+  pile p1;
+  pile vide;
+};
+
+
+TEST_F(PileTest, PileVide) {
+  EXPECT_EQ(0,vide.size());
+  EXPECT_NE(0,p1.size());
+}
+
+
+TEST_F(PileTest, PileStandard) {
+  EXPECT_EQ(2,p1.top()); // erreur volontaire...
+  EXPECT_EQ(3,p1.size());
+}
+
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Résultats d'exécution (partiels)}
+{\tiny
+\begin{verbatim}
+[MBP-GM:tests/code/google-test-examples-build] moreau% ./google-test-examples_test
+Running main() from gtest_main.cc
+[==========] Running 7 tests from 3 test cases.
+[----------] Global test environment set-up.
+
+...
+
+[----------] 2 tests from PileTest
+[ RUN      ] PileTest.PileVide
+[       OK ] PileTest.PileVide (0 ms)
+[ RUN      ] PileTest.PileStandard
+/Users/moreau/Documents/Enseignement/optionRV/MEDEV/tests/code/google-test-examples/test/pile_test.cpp:28: Failure
+Value of: p1.top()
+  Actual: 4
+Expected: 2
+[  FAILED  ] PileTest.PileStandard (0 ms)
+[----------] 2 tests from PileTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 3 test cases ran. (1 ms total)
+[  PASSED  ] 6 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] PileTest.PileStandard
+
+ 1 FAILED TEST
+\end{verbatim}
+}
+\end{frame}
+
+\begin{frame}{Que tester ?}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  des ``bons'' paramètres
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    cas ordinaires : \texttt{EXPECT\_TRUE(IsSubStringOf(``oo'', ``Google''))}
+  \item
+    cas limites : \texttt{EXPECT\_TRUE(IsSubStringOf(``'', ``''))}
+  \end{itemize}
+\item
+  des ``mauvais'' paramètres
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    vérifier que le code d'erreur est le bon - facile
+  \item
+    les plantages
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      oui, il faut les tester !
+    \item
+      continuer un programme qui aurait du planter est une erreur
+
+      \item
+        voir \texttt{EXPECTED\_DEATH()}
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Que ne pas tester ?}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Un peu facile de faire du zèle au lieu d'écrire son code
+\item
+  Ne pas tester
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    les tests !
+  \item
+    Ce qui ne peut pas planter (enfin plutôt ce sur quoi on n'a pas de
+    prise)
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      les appels système
+    \item
+      les erreurs hard
+    \end{itemize}
+  \item
+    Ce dont votre code dépend
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      les bibliothèques standards, les modules des autres, les
+      compilateurs
+    \item
+      Ca devrait être testé \ldots{} mais pas ici
+    \end{itemize}
+  \item
+    Exhaustivement
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      perd-on vraiment de l'information ?
+    \item
+      les tests doivent être rapides à écrire et faire tourner, être
+      corrects de façon évidente et faciles à maintenir
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Alors, combien de tests ?}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  au ``doigt mouillé''\ldots{}
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    suffisamment pour que vous puissiez intégrer un nouveau dans votre
+    équipe pour faire une modification majeure dans votre base de code
+    sans avoir peur qu'il casse tout !
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Rendre son code testable}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Il est souvent difficile de tester un composant isolément
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    les composants ont des dépendances
+  \item
+    certains composants peuvent être dans d'autres processus ou même sur
+    le réseau
+  \item
+    certains composants  dépendent d'interactions humaines
+  \item
+    c'est lent
+  \end{itemize}
+\item
+  solution : casser les dépendances
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    coder aux interfaces
+  \item
+    spécifier les dépendances dans le constructeur
+  \item
+    utiliser des \emph{mocks} dans les tests (hors programme)
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Utilisation des interfaces}
+\begin{lstlisting}
+class B : public BInterface { ... };
+
+class A {
+	public:
+	A(BInterface *b) : b_(b) {}
+	private:
+	BInterface* b_;
+
+};
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}{Qu'est-ce qui fait de bons tests ?}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Les bons tests doivent :
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    être indépendants
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      pas besoin de lire les autres tests pour savoir ce qu'un test fait
+    \item
+      quand on un test échoue, on doit pouvoir en trouver rapidement la
+      cause
+    \item
+      se focaliser sur des aspects différents, i.e.~1 bug = 1 test qui
+      échoue
+    \end{itemize}
+  \item
+    être répétables
+  \item
+    s'exécuter rapidement
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      en utilisant des \emph{mocks}
+    \end{itemize}
+  \item
+    permettre de localiser les bugs
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      les petits tests sont les meilleurs
+    \end{itemize}
+  \end{itemize}
+ \end{itemize}
+\end{frame}
+
+  \subsection{Quelques conseils pour écrire des
+  tests}\label{quelques-conseils-pour-uxe9crire-des-tests}
+
+\begin{frame}[fragile]
+\frametitle{Quelques conseils pour écrire des tests}
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Ne pas tester trop de choses dans une fonction TEST
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      plus facile de localiser ce qui ne va pas
+    \item
+      pas de dépendance entre les différentes parties du test
+    \item
+      s'assurer que ce n'est évidemment pas une erreur dans le code du
+      test
+    \end{itemize}
+  \item
+    Rendre les messages informatifs !
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      le test log devrait pouvoir permettre de déterminer la cause
+      \begin{itemize}
+    \item
+      mauvais : \texttt{foo.OpenFile(path) failed.}
+    \item
+      bon : \texttt{Failed to open file /tmp/abc/xyz.txt.}
+      \end{itemize}
+    \item
+      on peut ajouter de l'information aux assertions avec
+      \textless{}\textless{}
+    \item
+      Utiliser les prédicats
+	\begin{itemize}
+      \item
+        à la place de : \texttt{EXPECT\_TRUE(IsSubStringOf(needle, hay\_stack))}
+      \item
+        utiliser : \texttt{EXPECT\_PRED2(IsSubStringOf, needle, heystack)}
+	\end{itemize}
+    \end{itemize}
+  \end{itemize}
+%\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Expect et Assert}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Ils font sensiblement la même chose, sauf que :
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    EXPECT : on continue après un échec
+  \item
+    ASSERT : on arrête tout
+  \end{itemize}
+\item
+  Mieux vaut (quand on peut) utiliser EXPECT
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    on peut régler plusieurs problèmes en un cycle compilation-test
+  \end{itemize}
+\item
+  N'utilisez ASSERT que si cela n'a pas de sens de continuer
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Test driven development}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Principe
+
+  \begin{enumerate}
+  \def\labelenumi{\arabic{enumi}.}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    On écrit les tests avant le code
+  \item
+    Écrire \emph{juste assez} de code pour que les tests réussissent
+  \item
+    refactorer pour supprimer le code dupliqué
+  \item
+    Répéter
+  \end{enumerate}
+\item
+  Avantages
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    démarche très orientée client
+  \item
+    on sait tout le temps où on en est (progression = nombre de tests
+    réussis / nombre de tests total * 100)
+  \item
+    couverture de test = 100\%
+  \end{itemize}
+\item
+  Inconvénients
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Quelques interférences avec notre façon de penser habituelle\ldots{}
+  \end{itemize}
+\item
+  Est-ce qu'on doit vraiment le faire ? Tant que le code est
+  testé\ldots{}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Bibliographie}
+
+\begin{itemize}
+\item
+  site de Google C++ Testing Framework:
+  \url{https://github.com/google/googletest}
+\end{itemize}
+
+\end{frame}
+
+% % %
+
+\subsection{Utilisation de Google Tests avec la VM Linux}
+
+\begin{frame}[fragile]
+\frametitle{Utiliser Google Tests avec la machine virtuelle Linux}
+\begin{itemize}
+%\item \textbf{Testé sur la VM 2018 !}
+\item Télécharger Google Test sur \url{https://github.com/google/googletest}
+\begin{lstlisting}
+git clone https://github.com/google/googletest.git
+\end{lstlisting}
+\item Compiler Google Tests avec \texttt{cmake}
+\begin{lstlisting}
+mkdir build
+cd build
+cmake -Dgtest_build_samples=ON ../googletest
+make
+\end{lstlisting}
+\item Vérifier que tout va bien (i.e. tester Google Test !)
+\begin{lstlisting}
+cd build
+./sample1_unittest
+./sample2_unittest
+...
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Utiliser Google Test dans son projet}
+\begin{itemize}
+\item inclure le répertoire \texttt{googletest/googletest/include} dans les répertoires dans lequel le compilateur fait ses recherches
+\item inclure le répertoire \texttt{googletest/googletest/make} dans les répertoires dans lequel l'éditeur de liens fait ses recherches
+\item ajouter \texttt{gtest.h} dans les inclusions du fichier de test
+\item ajouter \texttt{gtest-all.o} pour l'éditeur de liens
+\item Si vous n'avez pas de main() qui lance les tests, ajouter \texttt{gtest\_main.o} pour l'éditeur de liens
+\item compilez et éditez les liens, lancez les tests !
+\item Le code de l'exemple est disponible sur hippocampus
+\end{itemize}
+\end{frame}
+
+
+\subsection{Utilisation de Google Tests avec Visual Studio 2012}
+
+\begin{frame}{Utiliser Google Tests avec Visual Studio 2012}
+\begin{itemize}
+  \item \textbf{Ceci est une tentative ! ni garantie, ni optimale}
+  \item source : http://www.bogotobogo.com/cplusplus/google\_unit\_test\_gtest.php
+  \item Testé avec la version 2012 "locale" de Visual Studio
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Démarche (1/4)}
+\begin{itemize}
+  \item Télécharger Google Tests sur github
+  \item Le décompresser
+  \item Nouvelle solution Visual Studio : elle inclura à la fois Google Test et le code à tester
+  \item Créer un \textbf{projet} gtest au sein de cette solution
+  \begin{itemize}
+    \item projet : Win32, static library
+    \item décocher "entêtes précompilées"
+  \end{itemize}
+  \item Dans les propriétés du projet, ajouter dans C/C++ | Général | Autres répertoires include
+  \begin{itemize}
+    \item \emph{endroit de décompression de gtest}/
+    \item \emph{endroit de décompression de gtest}/include
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Démarche (2/4)}
+  \begin{itemize}
+    \item Ajouter deux fichiers source (en allant les chercher dans votre install gtest)
+    \begin{itemize}
+      \item \texttt{gtest-all.cc}
+      \item \texttt{gtest\_main.cc}
+    \end{itemize}
+    \item \textbf{Spécifique VC++ <= 2012}
+    \begin{itemize}
+      \item Propriétés | C/C++ | Pré-processeur
+      \item ajouter une ligne \texttt{\_VARIADIC\_MAX 10}
+    \end{itemize}
+    \item Générer la solution
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Démarche (3/4)}
+  \begin{itemize}
+    \item On crée un nouveau projet avec le code à tester dans la solution
+    \item c'est une application console cette fois
+    \item Ajouter une dépendance au projet gtest (clic droit dépendance)
+    \item créer son code et ses tests !
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Démarche (4/4)}
+  \begin{itemize}
+    \item Pour compiler le nouveau projet
+    \begin{itemize}
+      \item Ajouter les mêmes include que précédemment
+      \item Ajouter le gtest.lib généré par le projet gtest dans les librairies à inclure (par exemple par glisser-déplacer depuis l'explorateur)
+      \item Compiler le tout et lancer !
+    \end{itemize}
+  \end{itemize}
+\end{frame}
