@@ -36,12 +36,12 @@ grands sites web et de façon plus générale dans les collections
 d’information.
 
 Les changements sont généralement identifiés par des codes utilisant des
-lettres et des chiffres, appelés le \emph{numéro de révision}. Par
+lettres et des chiffres, appelés le \alert{numéro de révision}. Par
 exemple, si un ensemble initial de fichiers sera appelé \emph{révision
 1}, après un premier ensemble de changements effectués, il sera appelé
 \emph{révision 2} et ainsi de suite.
 
-Chaque révision est associée à un horodatage (timestamp) et à un auteur.
+\alert{Chaque révision} est associée à un horodatage (\alert{timestamp}) et à un \alert{auteur}.
 
 Les révisions pourront être comparées, restaurées et dans certains cas
 fusionnées.
@@ -301,7 +301,7 @@ Illustrations : utilisation des branches}}
 \end{column}
 
 \begin{column}{0.60\textwidth}
-La branche \texttt{new-feature}permet de
+La branche \texttt{new-feature} permet de
 
 \begin{itemize}
 \tightlist
@@ -501,7 +501,7 @@ Que stocke-t-on dans le repository ?}}
 \begin{itemize}
 \tightlist
 \item
-  Tous les fichiers qui ne sont \textbf{pas} générés par un outil
+  Tous les fichiers qui ne sont \alert{\textbf{pas}} générés par un outil
 
   \begin{itemize}
   \tightlist
@@ -516,8 +516,8 @@ Que stocke-t-on dans le repository ?}}
     des fichiers de ressources (images, audio\ldots{})
   \end{itemize}
 \item
-  Il ne faut pas stocker les fichiers générés (sous peine de gérer des
-  confluts inutiles)
+  Il ne faut pas stocker les fichiers générés par un outil (sous peine de gérer des
+  conflits inutiles)
 
   \begin{itemize}
   \tightlist
@@ -553,7 +553,7 @@ Quelques bonnes pratiques de \texttt{commit}}}
   \begin{itemize}
   \tightlist
   \item
-    c’est obligatoire !
+    \alert{c’est obligatoire !}
   \item
     décrire le pourquoi du changement plutôt que le changement lui-même
   \end{itemize}
@@ -680,34 +680,106 @@ Histoire}}
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%% cg
+
+
 \begin{frame}{%
 \protect\hypertarget{utilisation-de-git}{%
-Utilisation de git}}
+Utilisation de git - Installation}}
 
-\begin{columns}[T]
-\begin{column}{0.40\textwidth}
-\includegraphics[width=1\textwidth]{images/GitX-Commit.png}
-
-\includegraphics[width=1\textwidth]{images/github.png}
-\end{column}
-
-\begin{column}{0.60\textwidth}
 \begin{itemize}
 \tightlist
+\item \alert{Linux}
+
+	\begin{itemize}
+	\item Installé par défaut
+	\item Si non installée \structure{\texttt{apt-get install git-all}} (sous Ubuntu - Debian)
+	\item Pour d'autres versions de Unix \url{http://git-scm.com/download/linux}
+	\end{itemize}
+
 \item
-  la ligne de commande (installé par défaut avec les autres outils ou
-  certains IDE)
-\item
-  Turtoise Git (Windows)
-\item
-  Github (toutes plate-formes)
-\item
-  plugins git (Eclipse, Netbeans, Atom\ldots{})
+  \alert{Mac}
+	\begin{itemize}
+	\item Avec Xcode Command Line Tools.
+	\item Sur Mavericks (10.9) ou postérieur, vous pouvez simplement essayer de lancer git dans le terminal la première fois. S’il n’est pas déjà installé, il vous demandera de le faire.
+	\end{itemize}
+
+\item Utilisation \alert{avec interface graphique}
+	\begin{itemize}
+	\item	  Turtoise Git (Windows)
+	\item   plugins git (Eclipse, Netbeans, Atom\ldots{})
+	\end{itemize}
 \end{itemize}
-\end{column}
-\end{columns}
 
 \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%% cg
+
+
+\begin{frame}[fragile]
+{%
+\protect\hypertarget{utilisation-de-git}{%
+Paramétrage à la première utilisation de Git}}
+
+Identité
+
+\begin{lstlisting}
+$ git config --global user.name "John Doe"
+$ git config --global user.email johndoe@example.com
+\end{lstlisting}
+
+Choix de l'éditeur de texte
+
+\begin{lstlisting}
+$ git config --global core.editor emacs
+\end{lstlisting}
+
+Vérification de vos paramètres
+
+\begin{lstlisting}
+$ git config --list
+user.name=John Doe
+user.email=johndoe@example.com
+color.status=auto
+color.branch=auto
+color.interactive=auto
+color.diff=auto
+\end{lstlisting}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{frame}{%
+%\protect\hypertarget{utilisation-de-git}{%
+%Utilisation de git - ligne de commande}}
+
+%\begin{columns}[T]
+%\begin{column}{0.40\textwidth}
+%\includegraphics[width=1\textwidth]{images/GitX-Commit.png}
+
+%\includegraphics[width=1\textwidth]{images/github.png}
+%\end{column}
+
+%\begin{column}{0.60\textwidth}
+%\begin{itemize}
+%\tightlist
+%\item
+%  la ligne de commande (installé par défaut avec les autres outils ou
+%  certains IDE)
+%\item
+%  Turtoise Git (Windows)
+%\item
+%  Github (toutes plate-formes)
+%\item
+%  plugins git (Eclipse, Netbeans, Atom\ldots{})
+%\end{itemize}
+%\end{column}
+%\end{columns}
+
+%\end{frame}
 
 \begin{frame}[fragile]{%
 \protect\hypertarget{cruxe9ation-dun-ruxe9fuxe9rentiel-local}{%
@@ -717,11 +789,11 @@ Création d’un référentiel local}}
 git init myrepository
 \end{verbatim}
 
-Cette commande crée un répertoire \emph{myrepository} * le repository
-lui même est contenu dans \emph{myrepository/.git} * une copie de
+Cette commande crée un répertoire \emph{myrepository}, le repository
+lui même est contenu dans \emph{myrepository/.git},  une copie de
 travail (initialement vide) est créée dans \emph{myrepository/}
 
-\begin{verbatim}
+\begin{lstlisting}
 [MbP-GM15:~/tmp] moreau% pwd
 /Users/moreau/tmp
 [MbP-GM15:~/tmp] moreau% git init helloworld
@@ -731,7 +803,7 @@ Initialized empty Git repository in /Users/moreau/tmp/helloworld/.git/
 [MbP-GM15:~/tmp] moreau% ls -a helloworld/.git
 .           HEAD        config      hooks       objects
 ..          branches    description info        refs
-\end{verbatim}
+\end{lstlisting}
 
 \end{frame}
 
@@ -739,10 +811,10 @@ Initialized empty Git repository in /Users/moreau/tmp/helloworld/.git/
 \protect\hypertarget{premiers-commits}{%
 Premiers commits}}
 
-\begin{verbatim}
+\begin{lstlisting}
 git add file
 git commit [-m message]
-\end{verbatim}
+\end{lstlisting}
 
 Avec \texttt{git}, il y a deux opérations :
 
@@ -762,7 +834,7 @@ Par défaut les commits sont effectués dans la branche \emph{master}
 \protect\hypertarget{exemple}{%
 Exemple}}
 
-\begin{verbatim}
+\begin{lstlisting}
 [MbP-GM15:~/tmp] moreau% cd helloworld/
 [MbP-GM15:~/tmp/helloworld] moreau% emacs hello.txt
 [MbP-GM15:~/tmp/helloworld] moreau% git add hello.txt
@@ -771,7 +843,7 @@ Exemple}}
  1 file changed, 1 insertion(+)
  create mode 100644 hello.txt
 [MbP-GM15:~/tmp/helloworld] moreau%
-\end{verbatim}
+\end{lstlisting}
 
 Remarque : git utilise des hash \texttt{b9e1f92} pour numéroter les
 commits
@@ -823,7 +895,7 @@ prochain commit\footnote<.->{la motivation et l’utilisation sortent du
 \protect\hypertarget{exemple-modification-dun-fichier}{%
 Exemple : modification d’un fichier}}
 
-\begin{verbatim}
+\begin{lstlisting}
 [MbP-GM15:~/tmp/helloworld] moreau% echo 'bla bla bla' >> hello.txt
 [MbP-GM15:~/tmp/helloworld] moreau% git commit
 On branch master
@@ -831,17 +903,17 @@ Changes not staged for commit:
     modified:   hello.txt
 
 no changes added to commit
-\end{verbatim}
+\end{lstlisting}
 
 \texttt{git} se plaint qu’il y a rien de changé. En réalité, il faut
 faire
 
-\begin{verbatim}
+\begin{lstlisting}
 [MbP-GM15:~/tmp/helloworld] moreau% git add hello.txt
 [MbP-GM15:~/tmp/helloworld] moreau% git commit -m "quelques changements"
 [master 543461a] quelques changements
  1 file changed, 1 insertion(+)
-\end{verbatim}
+\end{lstlisting}
 
 \end{frame}
 
@@ -872,14 +944,14 @@ git commit
 
 supprime un fichier de la copie de travail et du référentiel
 
-\begin{verbatim}
+\begin{lstlisting}
 [MbP-GM15:~/tmp/helloworld] moreau% git rm hello.txt
 rm 'hello.txt'
 [MbP-GM15:~/tmp/helloworld] moreau% git commit -m "plus besoin"
 [master 388f711] plus besoin
  1 file changed, 2 deletions(-)
  delete mode 100644 hello.txt
-\end{verbatim}
+\end{lstlisting}
 
 \end{frame}
 
@@ -1019,7 +1091,7 @@ git checkout -b nouvelle_branche  [ depart ]
   défaut \texttt{git}utilise l’emplacement courant
 \end{itemize}
 
-\begin{verbatim}
+\begin{lstlisting}
 [MbP-GM15:~/tmp/helloworld] moreau% git status
 On branch master
 nothing to commit, working tree clean
@@ -1028,25 +1100,25 @@ Switched to a new branch 'develop'
 [MbP-GM15:~/tmp/helloworld] moreau% git status
 On branch develop
 nothing to commit, working tree clean
-\end{verbatim}
+\end{lstlisting}
 
 \end{frame}
 
 \begin{frame}[fragile]{%
 \protect\hypertarget{passer-dune-branche-uxe0-lautres}{%
-Passer d’une branche à l’autres}}
+Passer d’une branche à l’autre}}
 
 \texttt{git\ checkout\ {[}-m{]}} \emph{branch\_name}
 
-\begin{verbatim}
+\begin{lstlisting}
 [MbP-GM15:~/tmp/helloworld] moreau% git status
 On branch develop
 nothing to commit, working tree clean
 [MbP-GM15:~/tmp/helloworld] moreau% git checkout master
 Switched to branch 'master'
-\end{verbatim}
+\end{lstlisting}
 
-La commande ne fonctionne que si le copie de travail est propre.
+La commande ne fonctionne que si la copie de travail est propre.
 L’option \texttt{-m} permet de demander une fusion vers la branche de
 destination.
 
@@ -1061,9 +1133,9 @@ Fusion de branches}}
 fusionne les changements effectués dans \emph{other\_branch} vers la
 branche courante.
 
-\textbf{Attention} : cette commande n’est pas symétrique !
+\alert{\textbf{Attention}} : cette commande n’est pas symétrique !
 
-\begin{verbatim}
+\begin{lstlisting}
 [MbP-GM15:~/tmp/helloworld] moreau% git add toto.txt
 [MbP-GM15:~/tmp/helloworld] moreau% git commit
 [develop 9d7c832] test
@@ -1077,7 +1149,7 @@ Fast-forward
  toto.txt | 1 +
  1 file changed, 1 insertion(+)
  create mode 100644 toto.txt
-\end{verbatim}
+\end{lstlisting}
 
 \end{frame}
 
@@ -1401,7 +1473,7 @@ Introduction}}
   \end{itemize}
 \item
   dans tous les cas, il faut apprendre quelques commandes
-  \texttt{git}supplémentaires
+  \texttt{git} supplémentaires
 \end{itemize}
 
 \end{frame}
