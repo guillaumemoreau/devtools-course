@@ -1,0 +1,63 @@
+% source : http://codegolf.stackexchange.com/questions/35328/3d-discrete-dogfighting-duel-now-open-to-non-java-submissions?lq=1
+
+
+\section{Bataille aérienne}\label{bataille-auxe9rienne}
+
+Le but de ce TP est simuler une bataille aérienne entre 2 escadrilles,
+la vôtre (i.e.~celle que vous aurez programmée avec votre tactique) et
+celle contrôlée par l'ordinateur. A chaque, les avions pourront bouger
+et tirer. Très simple \ldots{} en apparence.
+
+\subsection{Terrain de jeu}\label{terrain-de-jeu}
+
+Pour ne pas trop compliquer le TP, le combat se déroule dans un cube
+discret de côté \emph{n} (par exemple, on peut prendre n=14) dans lequel
+se trouvent vos 2 avions et les 2 avions de l'ordinateur. Vos avions
+partent des positions (0,5,0) et (0,8,0), ceux de l'ordinateur de
+(13,5,13) et (13,8,13). Tous les avions commencent le jeu en vol
+horizontal et en s'éloignant du mur vertical dont ils sont le plus
+proches.
+
+\subsection{Mouvements}\label{mouvements}
+
+Comme ce sont des avions et non des hélicoptères, il y a quelques règles à
+respecter : il n'est pas possible de changer instantanément de direction
+et encore moins de rester sur place. L'avion doit conserver une sorte de
+``cap'' et avancer dans la direction de ce cap. A chaque tour de jeu, il
+ne peut changer de direction qu'au maximum de 45 degrés autour de ce
+cap. Dans un tour de jeu, tous les avions annoncent à tous les autres
+leur nouveau cap puis effectuent leur mouvement. Deux avions qui
+arrivent sur la même case à un même pas de temps sont tous les deux détruits.
+
+Attention, les avions de l'ordinateur peuvent tricher : ils peuvent traverser les
+murs (et réapparaitre en face). Pour le reste, ils essaient toujours de
+s'aligner vers un vos deux vos avions (le plus proche d'eux à l'instant) pour
+vous tirer dessus. Vous pourrez organiser la tactique de vos avions
+comme vous le souhaitez : soit ils agiront de façon individuelle, soit
+coordonnée. Attention, vos avions n'ont pas le droit de traverser les
+murs. Si un avion heurte un mur, il est détruit.
+
+\subsection{Tir et destruction}\label{tir-et-destruction}
+
+Chaque avion ne peut tirer qu'une fois au plus par tour et ceci doit
+être décidé en même temps que la direction de vol. Le tir se fait bien
+entendu dans la direction de l'avion et a lieu juste après le mouvement
+de l'avion. Après chaque tir, il faut refroidir le canon pendant 1
+tour. Le canon fonctionne de façon instantanée et détruit immédiatement
+l'avion se trouvant sur sa trajectoire. Il ne peut détruire qu'un avion
+à la fois. Deux avions peuvent se tirer dessus en même temps et donc se
+détruire tous les deux.
+
+Pour que le jeu se termine, on peut considérer que le canon ``tire
+large'', c'est-à-dire dans le cas où le canon tire sur une ligne
+horizontale, les lignes à gauche, droite, supérieures et inférieures
+font partie de la zone où le canon fera des dégâts.
+
+\section{Travail à effectuer}\label{travail-uxe0-effectuer}
+
+Il est attendu \textbf{un seul TP pour toute l'option} : vous devez vous
+organiser pour écrire le code pour les deux types d'avions, la zone de
+combat, la visualisation en 3D (OpenGl/GLUT ou OpenSceneGraph). Bien sûr
+vous pouvez écrire plusieurs stratégies différentes pour vos avions. Celles-ci peuvent individuelles ou coordonnées, comporter des parts offensives et défensives...
+
+
